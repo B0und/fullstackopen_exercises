@@ -5,17 +5,28 @@ const Button = ({ handleClick, text }) => (
 );
 
 const AvgDisplay = ({ good, bad, neutral }) => {
-  return <p> average {(good - bad) / (good + neutral + bad)} </p>;
+  return (
+    <tr>
+      <td>average</td>
+      <td>{(good - bad) / (good + neutral + bad)}</td>
+    </tr>
+  );
 };
 
 const PositiveDisplay = ({ good, bad, neutral }) => {
-  return <p> positive {(good / (good + neutral + bad)) * 100} %</p>;
+  return (
+    <tr>
+      <td>positive</td>
+      <td>{(good / (good + neutral + bad)) * 100} %</td>
+    </tr>
+  );
 };
 
 const Statistic = ({ text, value }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 );
 
 const Statistics = (props) => {
@@ -25,15 +36,23 @@ const Statistics = (props) => {
   return (
     <div>
       <h1>statistics</h1>
-      <Statistic text={"good"} value={props.good} />
-      <Statistic text={"neutral"} value={props.neutral} />
-      <Statistic text={"bad"} value={props.bad} />
-      <AvgDisplay good={props.good} bad={props.bad} neutral={props.neutral} />
-      <PositiveDisplay
-        good={props.good}
-        bad={props.bad}
-        neutral={props.neutral}
-      />
+      <table>
+        <tbody>
+          <Statistic text={"good"} value={props.good} />
+          <Statistic text={"neutral"} value={props.neutral} />
+          <Statistic text={"bad"} value={props.bad} />
+          <AvgDisplay
+            good={props.good}
+            bad={props.bad}
+            neutral={props.neutral}
+          />
+          <PositiveDisplay
+            good={props.good}
+            bad={props.bad}
+            neutral={props.neutral}
+          />
+        </tbody>
+      </table>
     </div>
   );
 };
