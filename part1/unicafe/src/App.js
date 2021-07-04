@@ -12,6 +12,12 @@ const PositiveDisplay = ({ good, bad, neutral }) => {
   return <p> positive {(good / (good + neutral + bad)) * 100} %</p>;
 };
 
+const Statistic = ({ text, value }) => (
+  <p>
+    {text} {value}
+  </p>
+);
+
 const Statistics = (props) => {
   if (props.good === 0 && props.neutral === 0 && props.bad === 0) {
     return <p>No feedback given</p>;
@@ -19,9 +25,9 @@ const Statistics = (props) => {
   return (
     <div>
       <h1>statistics</h1>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
+      <Statistic text={"good"} value={props.good} />
+      <Statistic text={"neutral"} value={props.neutral} />
+      <Statistic text={"bad"} value={props.bad} />
       <AvgDisplay good={props.good} bad={props.bad} neutral={props.neutral} />
       <PositiveDisplay
         good={props.good}
