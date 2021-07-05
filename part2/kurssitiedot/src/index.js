@@ -1,56 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
-const Header = ({ course }) => {
-  return <h1>{course.name}</h1>;
-};
-
-const Total = ({ course }) => {
-  const sum = course.parts.reduce((sum, part) => sum + part.exercises, 0);
-  return <p>Total of {sum} exercises</p>;
-};
-
-const Part = (props) => {
-  return (
-    <p>
-      {props.part.name} {props.part.exercises}
-    </p>
-  );
-};
-
-const Content = ({ course }) => {
-  if (typeof course.parts !== "undefined") {
-    return (
-      <div>
-        {course.parts.map((part) => (
-          <Part part={part} key={part.id} />
-        ))}
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <p>No course information</p>
-      </div>
-    );
-  }
-};
-
-const Course = ({ courses }) => {
-  return (
-    <>
-      {courses.map((course) => {
-        return (
-          <div key={course.id}>
-            <Header course={course} />
-            <Content course={course} />
-            <Total course={course} />
-          </div>
-        );
-      })}
-    </>
-  );
-};
+import Course from "./components/Course";
 
 const App = () => {
   const courses = [
@@ -98,7 +48,13 @@ const App = () => {
     },
   ];
 
-  return <Course courses={courses} />;
+
+  return (
+    <>
+      <h1>Web development curriculum</h1>
+      <Course courses={courses} />
+    </>
+  );
 };
 
 ReactDOM.render(<App />, document.getElementById("root"));
