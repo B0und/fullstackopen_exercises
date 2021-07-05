@@ -31,8 +31,6 @@ const App = () => {
     "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients",
   ];
 
-  // const votes = new Array(anecdotes.length).fill(0);
-
   const [selected, setSelected] = useState(0);
   const [voted, setVoted] = useState(new Array(anecdotes.length).fill(0));
 
