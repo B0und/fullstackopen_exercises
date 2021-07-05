@@ -4,6 +4,7 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}> {text} </button>
 );
 
+
 const AvgDisplay = ({ good, bad, neutral }) => {
   return (
     <tr>
