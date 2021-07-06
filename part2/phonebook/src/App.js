@@ -15,8 +15,19 @@ const App = () => {
   const [newName, setNewName] = useState("");
 
   const addNumber = (event) => {
-    console.log("Pressed button lmao", newName);
     event.preventDefault();
+
+    function personExists(name) {
+      return persons.some(function (element) {
+        return element.name === name;
+      });
+    }
+
+    if (personExists(newName)) {
+      alert(`${newName} is already added to phonebook`);
+      return <></>;
+    }
+
     const newPerson = {
       name: newName,
     };
