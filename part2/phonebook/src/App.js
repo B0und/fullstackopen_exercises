@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-
-const NumbersDisplay = ({ persons }) => {
-  // console.log(persons);
-  return (
-    <div>
-      {persons.map((person) => (
-        <p key={person.name}>
-          {person.name} {person.number}
-        </p>
-      ))}
-    </div>
-  );
-};
+import Filter from "./components/Filter";
+import AddPerson from "./components/AddPerson";
+import Contacts from "./components/Contacts";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -23,11 +13,11 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [showFiltered, setShowFiltered] = useState(true);
-  const [newFilter, setNewFilter] = useState("")
+  const [newFilter, setNewFilter] = useState("");
 
-  const filteredPhones = showFiltered 
-  ? persons 
-  : persons.filter(person => person.name.toLowerCase().startsWith(newFilter.toLowerCase()))
+  const filteredPhones = showFiltered
+    ? persons
+    : persons.filter((person) => person.name.toLowerCase().startsWith(newFilter.toLowerCase()));
 
   const addNumber = (event) => {
     event.preventDefault();
@@ -47,8 +37,9 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    setPersons(persons.concat(newPerson));
     setNewName("");
+    setNewNumber("");
+    setPersons(persons.concat(newPerson));
   };
 
   const onNameChange = (event) => {
@@ -62,31 +53,20 @@ const App = () => {
   const onFilterChange = (event) => {
     setNewFilter(event.target.value);
     if (newFilter.length !== 0) {
-      setShowFiltered(true)
-    }
-    else {
-      setShowFiltered(false)
+      setShowFiltered(true);
+    } else {
+      setShowFiltered(false);
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        search names: <input onChange={onFilterChange} />
-      </div>
-      <h2>Add new contact</h2>
-      <form onSubmit={addNumber}>
-        <div>
-          name: <input onChange={onNameChange} />
-        </div>
-        <div>
-          number: <input onChange={onNumberChange} />
-        </div>
-        <button type="submit">add</button>
-      </form>
+      <Filter onFilterChange={onFilterChange} />
+
+      <AddPerson addNumber={addNumber} onNameChange={onNameChange} onNumberChange={onNumberChange} />
       <h2>Numbers</h2>
-      <NumbersDisplay persons={filteredPhones} />
+      <Contacts persons={filteredPhones} />
     </div>
   );
 };
