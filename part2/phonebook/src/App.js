@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import AddPerson from "./components/AddPerson";
 import Contacts from "./components/Contacts";
 
+import axios from "axios";
+
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [showFiltered, setShowFiltered] = useState(true);
   const [newFilter, setNewFilter] = useState("");
 
+  const hook = () => {
+    console.log("effect");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    });
+  };
+
+  useEffect(hook, []);
+
   const filteredPhones = showFiltered
     ? persons
-    : persons.filter((person) => person.name.toLowerCase().startsWith(newFilter.toLowerCase()));
+    : persons.filter((person) =>
+        person.name.toLowerCase().startsWith(newFilter.toLowerCase())
+      );
 
   const addNumber = (event) => {
     event.preventDefault();
@@ -64,7 +73,11 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter onFilterChange={onFilterChange} />
 
-      <AddPerson addNumber={addNumber} onNameChange={onNameChange} onNumberChange={onNumberChange} />
+      <AddPerson
+        addNumber={addNumber}
+        onNameChange={onNameChange}
+        onNumberChange={onNumberChange}
+      />
       <h2>Numbers</h2>
       <Contacts persons={filteredPhones} />
     </div>
