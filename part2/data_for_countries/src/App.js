@@ -11,7 +11,26 @@ function SearchInput({ searchHandler }) {
   );
 }
 
-function CountriesDisplay({ filteredCountries }) {
+function CountryDisplay({ country }) {
+  const languages = country.languages;
+  const countryUrl = country.flag;
+  return (
+    <>
+      <h1>{country.name}</h1>
+      <p>{country.capital}</p>
+      <p>{country.population}</p>
+      <h2>Languages</h2>
+      <ul>
+        {languages.map((language) => (
+          <li key={language.name}>{language.name}</li>
+        ))}
+      </ul>
+      <img src={countryUrl} alt="flag img" />
+    </>
+  );
+}
+
+function CountriesDisplay({ filteredCountries, setSearchFilter }) {
   if (filteredCountries.length > 10) {
     return (
       <>
@@ -20,28 +39,26 @@ function CountriesDisplay({ filteredCountries }) {
     );
   } else if (filteredCountries.length === 1) {
     const country = filteredCountries[0];
-    const languages = filteredCountries[0].languages;
-    const countryUrl = country.flag;
-    console.log(countryUrl);
-    return (
-      <>
-        <h1>{country.name}</h1>
-        <p>{country.capital}</p>
-        <p>{country.population}</p>
-        <h2>Languages</h2>
-        <ul>
-          {languages.map((language) => (
-            <li key={language.name}>{language.name}</li>
-          ))}
-        </ul>
-        <img src={countryUrl} alt="flag img" />
-      </>
-    );
+
+    <CountryDisplay country={country} />;
   } else {
+    // const onClick = (e, index) => {
+    //   // e.preventDefault();
+    //   setSearchFilter(filteredCountries[index].name);
+    // };
     return (
       <div>
-        {filteredCountries.map((country) => (
-          <p key={country.name}>{country.name}</p>
+        {filteredCountries.map((country, index) => (
+          <div
+            key={country.name}
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <p>{country.name}</p>
+            <button onClick={() =>  setSearchFilter(filteredCountries[index].name)}>show</button>
+          </div>
         ))}
       </div>
     );
@@ -71,7 +88,6 @@ function App() {
     setSearchFilter(event.target.value);
     if (searchFilter.length !== 0) {
       setShowFiltered(true);
-      console.log(filteredCountries);
     } else {
       setShowFiltered(false);
     }
@@ -80,7 +96,10 @@ function App() {
   return (
     <>
       <SearchInput searchHandler={searchHandler} />
-      <CountriesDisplay filteredCountries={filteredCountries} />
+      <CountriesDisplay
+        filteredCountries={filteredCountries}
+        setSearchFilter={setSearchFilter}
+      />
     </>
   );
 }
