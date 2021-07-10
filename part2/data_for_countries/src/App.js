@@ -30,7 +30,24 @@ function CountryDisplay({ country }) {
   );
 }
 
-function CountriesDisplay({ filteredCountries, setShowCountry, showCountry }) {
+function WeatherDisplay (props)  {
+  props.getWeather();
+  console.log(props.weather)
+
+  if (props.weather === undefined) {
+    return <p>Loading ...</p>
+  }
+  else {
+  
+  return (
+    <div>
+      <p>temperature: {props.weather.current.temp_c}</p>
+    </div>
+  );
+  }
+}
+
+function CountriesDisplay({ filteredCountries, setShowCountry, showCountry, getWeather, weather }) {
   if (filteredCountries.length > 10) {
     return (
       <>
@@ -60,6 +77,8 @@ function CountriesDisplay({ filteredCountries, setShowCountry, showCountry }) {
           </div>
         ))}
         {showCountry.name && <CountryDisplay country={showCountry}/>}
+        {showCountry.name && <WeatherDisplay country={showCountry} getWeather={getWeather} weather={weather}/>}
+       
       </div>
     );
   }
@@ -67,16 +86,29 @@ function CountriesDisplay({ filteredCountries, setShowCountry, showCountry }) {
 
 function App() {
   const [countries, setCountries] = useState([]);
+  const [weather, setWeather] = useState();
   const [searchFilter, setSearchFilter] = useState("");
   const [showFiltered, setShowFiltered] = useState(false);
   const [showCountry, setShowCountry] = useState({})
 
+  const api_key = process.env.REACT_APP_WEATHER_API_KEY;
+
   const getCountries = () => {
     axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
-      console.log("promise fulfilled");
+      console.log("countries promise fulfilled");
       setCountries(response.data);
     });
   };
+
+  const getWeather = () => {
+    axios.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${showCountry.name}`).then((response) => {
+      console.log("weather promise fulfilled");
+      const weatherData = response.data;
+      setWeather( weatherData);
+    });
+  }
+
+
   useEffect(getCountries, []);
 
   const filteredCountries = showFiltered
@@ -101,6 +133,8 @@ function App() {
         filteredCountries={filteredCountries}
         setShowCountry={setShowCountry}
         showCountry={showCountry}
+        getWeather={getWeather}
+        weather={weather}
       />
     </>
   );
