@@ -30,7 +30,7 @@ function CountryDisplay({ country }) {
   );
 }
 
-function CountriesDisplay({ filteredCountries, setSearchFilter }) {
+function CountriesDisplay({ filteredCountries, setShowCountry, showCountry }) {
   if (filteredCountries.length > 10) {
     return (
       <>
@@ -42,13 +42,9 @@ function CountriesDisplay({ filteredCountries, setSearchFilter }) {
 
     <CountryDisplay country={country} />;
   } else {
-    // const onClick = (e, index) => {
-    //   // e.preventDefault();
-    //   setSearchFilter(filteredCountries[index].name);
-    // };
     return (
       <div>
-        {filteredCountries.map((country, index) => (
+        {filteredCountries.map((country) => (
           <div
             key={country.name}
             style={{
@@ -57,9 +53,13 @@ function CountriesDisplay({ filteredCountries, setSearchFilter }) {
             }}
           >
             <p>{country.name}</p>
-            <button onClick={() =>  setSearchFilter(filteredCountries[index].name)}>show</button>
+            <button country={country.name} onClick={() => setShowCountry(country)}>
+              show
+            </button>
+            
           </div>
         ))}
+        {showCountry.name && <CountryDisplay country={showCountry}/>}
       </div>
     );
   }
@@ -69,6 +69,7 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [searchFilter, setSearchFilter] = useState("");
   const [showFiltered, setShowFiltered] = useState(false);
+  const [showCountry, setShowCountry] = useState({})
 
   const getCountries = () => {
     axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
@@ -98,7 +99,8 @@ function App() {
       <SearchInput searchHandler={searchHandler} />
       <CountriesDisplay
         filteredCountries={filteredCountries}
-        setSearchFilter={setSearchFilter}
+        setShowCountry={setShowCountry}
+        showCountry={showCountry}
       />
     </>
   );
