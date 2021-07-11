@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import AddPerson from "./components/AddPerson";
 import Contacts from "./components/Contacts";
 import personsService from "./services/persons";
+import Notification from "./components/notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [showFiltered, setShowFiltered] = useState(true);
   const [newFilter, setNewFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [messageStyle, setMessageStyle] = useState({});
 
   // load data from server
   useEffect(() => {
@@ -45,13 +48,24 @@ const App = () => {
         )
       ) {
         const updateId = persons.find((person) => person.name === newName).id;
-        personsService.update(updateId, newPerson).then((serverPerson) => {
-          setPersons(
-            persons.map((person) =>
-              person.id === updateId ? serverPerson : person
-            )
-          );
-        });
+        personsService
+          .update(updateId, newPerson)
+          .then((serverPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === updateId ? serverPerson : person
+              )
+            );
+            setMessageStyle(messageSuccessStyle);
+            setErrorMessage(`Replaced number for ${newName}`);
+          })
+          .catch((error) => {
+            setErrorMessage(`${newName} already deleted from server`);
+            setMessageStyle(messageFailStyle);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       }
       return <></>;
     }
@@ -60,6 +74,8 @@ const App = () => {
       setNewName("");
       setNewNumber("");
       setPersons(persons.concat(newDbPerson));
+      setMessageStyle(messageSuccessStyle);
+      setErrorMessage(`Added ${newName}`);
     });
   };
 
@@ -88,12 +104,29 @@ const App = () => {
     if (window.confirm(`Do you really want to delete ${deletePerson.name}?`)) {
       personsService.deletePerson(personId);
       setPersons(persons.filter((person) => person.id !== personId));
+      setMessageStyle(messageSuccessStyle);
+      setErrorMessage(`Removed ${deletePerson.name}`);
     }
+  };
+
+  const messageSuccessStyle = {
+    color: "green",
+    fontStyle: "italic",
+    fontSize: 22,
+    padding: 20,
+  };
+
+  const messageFailStyle = {
+    color: "red",
+    fontStyle: "bold",
+    fontSize: 22,
+    padding: 20,
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} messageStyle={messageStyle} />
       <Filter onFilterChange={onFilterChange} />
 
       <AddPerson
