@@ -17,8 +17,8 @@ function CountryDisplay({ country }) {
   return (
     <>
       <h1>{country.name}</h1>
-      <p>{country.capital}</p>
-      <p>{country.population}</p>
+      <p>Capital: {country.capital}</p>
+      <p>Population: {country.population}</p>
       <h2>Languages</h2>
       <ul>
         {languages.map((language) => (
@@ -30,24 +30,38 @@ function CountryDisplay({ country }) {
   );
 }
 
-function WeatherDisplay (props)  {
-  props.getWeather();
-  console.log(props.weather)
-
+function WeatherDisplay(props) {
+  console.log("In weather display");
+  console.log(props.weather);
   if (props.weather === undefined) {
-    return <p>Loading ...</p>
-  }
-  else {
-  
-  return (
-    <div>
-      <p>temperature: {props.weather.current.temp_c}</p>
-    </div>
-  );
+    return <p>Loading ...</p>;
+  } else {
+    console.log("In component:");
+    console.log(props.weather);
+    const weather_img = props.weather.current.weather_icons[0];
+    return (
+      <div>
+        <h2>Weather in {props.weather.location.name}</h2>
+        <p>
+          <b>temperature</b>: {props.weather.current.temperature} Celcius
+        </p>
+        <img src={weather_img} alt="" />
+        <p>
+          <b>wind:</b> {props.weather.current.wind_speed} mph, direction{" "}
+          {props.weather.current.wind_dir}
+        </p>
+      </div>
+    );
   }
 }
 
-function CountriesDisplay({ filteredCountries, setShowCountry, showCountry, getWeather, weather }) {
+function CountriesDisplay({
+  filteredCountries,
+  setShowCountry,
+  showCountry,
+  getWeather,
+  weather,
+}) {
   if (filteredCountries.length > 10) {
     return (
       <>
@@ -70,15 +84,19 @@ function CountriesDisplay({ filteredCountries, setShowCountry, showCountry, getW
             }}
           >
             <p>{country.name}</p>
-            <button country={country.name} onClick={() => setShowCountry(country)}>
+            <button
+              country={country.name}
+              onClick={() => {
+                setShowCountry(country);
+                getWeather(country.capital);
+              }}
+            >
               show
             </button>
-            
           </div>
         ))}
-        {showCountry.name && <CountryDisplay country={showCountry}/>}
-        {showCountry.name && <WeatherDisplay country={showCountry} getWeather={getWeather} weather={weather}/>}
-       
+        {showCountry.name && <CountryDisplay country={showCountry} />}
+        {showCountry.name && <WeatherDisplay weather={weather} />}
       </div>
     );
   }
@@ -89,7 +107,7 @@ function App() {
   const [weather, setWeather] = useState();
   const [searchFilter, setSearchFilter] = useState("");
   const [showFiltered, setShowFiltered] = useState(false);
-  const [showCountry, setShowCountry] = useState({})
+  const [showCountry, setShowCountry] = useState({});
 
   const api_key = process.env.REACT_APP_WEATHER_API_KEY;
 
@@ -100,14 +118,19 @@ function App() {
     });
   };
 
-  const getWeather = () => {
-    axios.get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${showCountry.name}`).then((response) => {
-      console.log("weather promise fulfilled");
-      const weatherData = response.data;
-      setWeather( weatherData);
-    });
-  }
-
+  const getWeather = (countryName) => {
+    const urlCountry = countryName.replace(" ", "_");
+    axios
+      .get(
+        `http://api.weatherstack.com/current?access_key=${api_key}&query=${urlCountry}`
+      )
+      .then((response) => {
+        console.log("weather promise fulfilled");
+        const weatherData = response.data;
+        console.log(response.data);
+        setWeather(weatherData);
+      });
+  };
 
   useEffect(getCountries, []);
 
