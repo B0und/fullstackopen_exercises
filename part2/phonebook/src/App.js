@@ -70,13 +70,25 @@ const App = () => {
       return <></>;
     }
 
-    personsService.create(newPerson).then((newDbPerson) => {
-      setNewName("");
-      setNewNumber("");
-      setPersons(persons.concat(newDbPerson));
-      setMessageStyle(messageSuccessStyle);
-      setErrorMessage(`Added ${newName}`);
-    });
+    personsService
+      .create(newPerson)
+      .then((newDbPerson) => {
+        setNewName("");
+        setNewNumber("");
+        setPersons(persons.concat(newDbPerson));
+        setMessageStyle(messageSuccessStyle);
+        setErrorMessage(`Added ${newName}`);
+      })
+      .catch((error) => {
+        setErrorMessage(error.response.data.error);
+        setMessageStyle(messageFailStyle);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
+    setNewName("");
+    setNewNumber("");
+    return <></>;
   };
 
   const onNameChange = (event) => {
@@ -97,9 +109,11 @@ const App = () => {
   };
 
   const deleteHandler = (event) => {
-    const personId = parseInt(
-      event.target.attributes.getNamedItem("personid").value
-    );
+    console.log(event);
+    const personId = event.target.attributes.getNamedItem("personid").value;
+
+    console.log(personId);
+    console.log(persons);
     const deletePerson = persons.find((person) => person.id === personId);
     if (window.confirm(`Do you really want to delete ${deletePerson.name}?`)) {
       personsService.deletePerson(personId);
